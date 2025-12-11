@@ -1,0 +1,61 @@
+import Foundation
+
+enum SymbolCategory: String, CaseIterable, Identifiable {
+    case all = "All"
+    case general = "General"
+    case communication = "Communication"
+    case weather = "Weather"
+    case objectsAndTools = "Objects & Tools"
+    case devices = "Devices"
+    case connectivity = "Connectivity"
+    case transportation = "Transportation"
+    case human = "Human"
+    case nature = "Nature"
+    case editing = "Editing"
+    case textFormatting = "Text Formatting"
+    case media = "Media"
+    case keyboard = "Keyboard"
+    case commerce = "Commerce"
+    case time = "Time"
+    case health = "Health"
+    case shapes = "Shapes"
+    case arrows = "Arrows"
+    case indices = "Indices"
+    case math = "Math"
+    case gaming = "Gaming"
+    case privacy = "Privacy"
+    case home = "Home"
+    case fitness = "Fitness"
+
+    var id: String { rawValue }
+
+    var icon: String {
+        switch self {
+        case .all: return "square.grid.2x2"
+        case .general: return "star"
+        case .communication: return "message"
+        case .weather: return "cloud.sun"
+        case .objectsAndTools: return "hammer"
+        case .devices: return "desktopcomputer"
+        case .connectivity: return "wifi"
+        case .transportation: return "car"
+        case .human: return "person"
+        case .nature: return "leaf"
+        case .editing: return "pencil"
+        case .textFormatting: return "textformat"
+        case .media: return "play.circle"
+        case .keyboard: return "keyboard"
+        case .commerce: return "cart"
+        case .time: return "clock"
+        case .health: return "heart"
+        case .shapes: return "square.on.circle"
+        case .arrows: return "arrow.right"
+        case .indices: return "a.circle"
+        case .math: return "plus.forwardslash.minus"
+        case .gaming: return "gamecontroller"
+        case .privacy: return "hand.raised"
+        case .home: return "house"
+        case .fitness: return "figure.run"
+        }
+    }
+}
