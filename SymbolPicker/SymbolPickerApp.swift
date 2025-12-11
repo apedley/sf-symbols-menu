@@ -15,18 +15,7 @@ struct SymbolPickerApp: App {
             systemImage: "square.grid.2x2"
         ) {
             ContentView()
-                .overlay(alignment: .topTrailing) {
-                    Button(
-                        "Quit",
-                        systemImage: "xmark.circle.fill"
-                    ) {
-                        NSApp.terminate(nil)
-                    }
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.plain)
-                    .padding(6)
-                }
-                .frame(width: 400, height: 500)
+                .frame(width: 500, height: 500)
         }
         .menuBarExtraStyle(.window)
     }
