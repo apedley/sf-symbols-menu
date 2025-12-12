@@ -102,6 +102,9 @@ struct ContentView: View {
                                 isCopied: viewModel.lastCopiedSymbol?.id == symbol.id,
                                 onCopy: {
                                     viewModel.copySymbol(symbol)
+                                },
+                                onCopyName: {
+                                    viewModel.copySymbolName(symbol)
                                 }
                             )
                         }

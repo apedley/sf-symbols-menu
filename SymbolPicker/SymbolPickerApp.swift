@@ -10,12 +10,23 @@ import SwiftUI
 @main
 struct SymbolPickerApp: App {
     var body: some Scene {
-        MenuBarExtra(
-            "SF Symbol Picker",
-            systemImage: "square.grid.2x2"
-        ) {
+        MenuBarExtra{
             ContentView()
                 .frame(width: 500, height: 500)
+        } label: {
+            Label {
+                    Text("SF Symbol Picker")
+                } icon: {
+                    let image: NSImage = {
+                        let ratio = $0.size.height / $0.size.width
+                        $0.size.height = 18
+                        $0.size.width = 18 / ratio
+                        return $0
+                    }(NSImage(named: "MenuBarIcon")!)
+                    
+                    Image(nsImage: image)
+                }
+
         }
         .menuBarExtraStyle(.window)
     }

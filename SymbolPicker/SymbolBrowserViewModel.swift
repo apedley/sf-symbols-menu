@@ -52,6 +52,15 @@ final class SymbolBrowserViewModel {
         resetCopiedSymbolAfterDelay(symbol)
     }
 
+    func copySymbolName(_ symbol: SFSymbol) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(symbol.name, forType: .string)
+
+        lastCopiedSymbol = symbol
+        resetCopiedSymbolAfterDelay(symbol)
+    }
+
     private func resetCopiedSymbolAfterDelay(_ symbol: SFSymbol) {
         Task {
             try? await Task.sleep(for: .seconds(1.5))

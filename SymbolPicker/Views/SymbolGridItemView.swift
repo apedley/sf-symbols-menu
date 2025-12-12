@@ -1,9 +1,11 @@
 import SwiftUI
+import AppKit
 
 struct SymbolGridItemView: View {
     let symbol: SFSymbol
     let isCopied: Bool
     let onCopy: () -> Void
+    let onCopyName: () -> Void
 
     @State private var isHovered = false
 
@@ -46,6 +48,63 @@ struct SymbolGridItemView: View {
             isHovered = hovering
         }
         .help(symbol.name)
+        .onRightClick(perform: onCopyName)
+    }
+}
+
+struct RightClickHandler: NSViewRepresentable {
+    let action: () -> Void
+
+    func makeNSView(context: Context) -> RightClickNSView {
+        let view = RightClickNSView()
+        view.action = action
+        return view
+    }
+
+    func updateNSView(_ nsView: RightClickNSView, context: Context) {
+        nsView.action = action
+    }
+}
+
+class RightClickNSView: NSView {
+    var action: (() -> Void)?
+    private var monitor: Any?
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        if window != nil {
+            monitor = NSEvent.addLocalMonitorForEvents(matching: .rightMouseDown) { [weak self] event in
+                guard let self = self,
+                      let window = self.window,
+                      event.window == window else {
+                    return event
+                }
+                let locationInView = self.convert(event.locationInWindow, from: nil)
+                if self.bounds.contains(locationInView) {
+                    self.action?()
+                }
+                return event
+            }
+        } else if let monitor = monitor {
+            NSEvent.removeMonitor(monitor)
+            self.monitor = nil
+        }
+    }
+
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        return nil
+    }
+
+    deinit {
+        if let monitor = monitor {
+            NSEvent.removeMonitor(monitor)
+        }
+    }
+}
+
+extension View {
+    func onRightClick(perform action: @escaping () -> Void) -> some View {
+        overlay(RightClickHandler(action: action))
     }
 }
 
@@ -54,12 +113,14 @@ struct SymbolGridItemView: View {
         SymbolGridItemView(
             symbol: SFSymbol(id: "star.fill", category: .general),
             isCopied: false,
-            onCopy: {}
+            onCopy: {},
+            onCopyName: {}
         )
         SymbolGridItemView(
             symbol: SFSymbol(id: "heart.fill", category: .general),
             isCopied: true,
-            onCopy: {}
+            onCopy: {},
+            onCopyName: {}
         )
     }
     .padding()
