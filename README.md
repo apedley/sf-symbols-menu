@@ -4,6 +4,8 @@ A lightweight macOS menu bar app for browsing and copying SF Symbols. Unapologet
 
 This app also lets you copy the sumbol itself instead of just the name which is useful for pasting into design tools like Figma. Left click to copy the Unicode character, right-click to copy the symbol name.
 
+[![SymbolPicker Screenshot](./screenshot.png)](./screenshot.png)
+
 ## Features
 
 - **Menu Bar Access** - Lives in your menu bar, no dock icon
