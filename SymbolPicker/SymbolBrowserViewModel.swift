@@ -12,6 +12,7 @@ final class SymbolBrowserViewModel {
 
     private static let recentSymbolsKey = "recentSymbolIDs"
     private static let maxRecentSymbols = 20
+    private static let favoriteSymbolsKey = "favoriteSymbolIDs"
 
     private(set) var recentSymbolIDs: [String] {
         didSet {
@@ -19,8 +20,15 @@ final class SymbolBrowserViewModel {
         }
     }
 
+    private(set) var favoriteSymbolIDs: Set<String> {
+        didSet {
+            UserDefaults.standard.set(Array(favoriteSymbolIDs), forKey: Self.favoriteSymbolsKey)
+        }
+    }
+
     init() {
         self.recentSymbolIDs = UserDefaults.standard.stringArray(forKey: Self.recentSymbolsKey) ?? []
+        self.favoriteSymbolIDs = Set(UserDefaults.standard.stringArray(forKey: Self.favoriteSymbolsKey) ?? [])
     }
 
     // Cache mapping symbol names to their Unicode characters
@@ -35,6 +43,8 @@ final class SymbolBrowserViewModel {
             result = recentSymbolIDs.compactMap { id in
                 allSymbols.first { $0.id == id }
             }
+        } else if selectedCategory == .favorites {
+            result = allSymbols.filter { favoriteSymbolIDs.contains($0.id) }
         } else if selectedCategory != .all {
             result = allSymbols.filter { $0.category == selectedCategory }
         } else {
@@ -91,6 +101,18 @@ final class SymbolBrowserViewModel {
             recents = Array(recents.prefix(Self.maxRecentSymbols))
         }
         recentSymbolIDs = recents
+    }
+
+    func isFavorite(_ symbol: SFSymbol) -> Bool {
+        favoriteSymbolIDs.contains(symbol.id)
+    }
+
+    func toggleFavorite(_ symbol: SFSymbol) {
+        if favoriteSymbolIDs.contains(symbol.id) {
+            favoriteSymbolIDs.remove(symbol.id)
+        } else {
+            favoriteSymbolIDs.insert(symbol.id)
+        }
     }
 
     private func resetCopiedSymbolAfterDelay(_ symbol: SFSymbol) {

@@ -12,7 +12,7 @@ struct SymbolPickerApp: App {
     var body: some Scene {
         MenuBarExtra{
             ContentView()
-                .frame(width: 500, height: 500)
+                .frame(width: 550, height: 550)
         } label: {
             Label {
                     Text("SymbolDrop")

@@ -100,17 +100,21 @@ struct ContentView: View {
                             SymbolGridItemView(
                                 symbol: symbol,
                                 isCopied: viewModel.lastCopiedSymbol?.id == symbol.id,
+                                isFavorite: viewModel.isFavorite(symbol),
                                 onCopy: {
                                     viewModel.copySymbol(symbol)
                                 },
                                 onCopyName: {
                                     viewModel.copySymbolName(symbol)
+                                },
+                                onToggleFavorite: {
+                                    viewModel.toggleFavorite(symbol)
                                 }
                             )
                         }
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 6)
                 }
             }
         }
@@ -151,5 +155,5 @@ struct SidebarCategoryButton: View {
 
 #Preview {
     ContentView()
-        .frame(width: 500, height: 500)
+        .frame(width: 550, height: 550)
 }

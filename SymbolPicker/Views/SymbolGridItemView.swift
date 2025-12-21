@@ -4,8 +4,10 @@ import AppKit
 struct SymbolGridItemView: View {
     let symbol: SFSymbol
     let isCopied: Bool
+    let isFavorite: Bool
     let onCopy: () -> Void
     let onCopyName: () -> Void
+    let onToggleFavorite: () -> Void
 
     @State private var isHovered = false
 
@@ -18,6 +20,18 @@ struct SymbolGridItemView: View {
                         .frame(width: 44, height: 44)
                         .foregroundStyle(isCopied ? .green : .primary)
 
+                    // Favorite star - top-left, visible on hover or when favorited
+                    if isHovered || isFavorite {
+                        Button(action: onToggleFavorite) {
+                            Image(systemName: isFavorite ? "star.fill" : "star")
+                                .font(.system(size: 12))
+                                .foregroundStyle(isFavorite ? .yellow : .secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .offset(x: -25, y: -16)
+                    }
+
+                    // Copied checkmark - top-right
                     if isCopied {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 16))
@@ -26,18 +40,14 @@ struct SymbolGridItemView: View {
                     }
                 }
 
-                if isHovered || isCopied {
-                    Text(isCopied ? "Copied!" : symbol.name)
-                        .font(.caption2)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                        .foregroundStyle(isCopied ? .green : .secondary)
-                } else {
-                    Text(" ")
-                        .font(.caption2)
-                }
+                Text(isHovered || isCopied ? (isCopied ? "Copied!" : symbol.name) : " ")
+                    .font(.caption2)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(isCopied ? .green : .secondary)
+                    .frame(height: 26, alignment: .center)
             }
-            .frame(width: 70, height: 70)
+            .frame(width: 70, height: 80)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(isHovered ? Color.accentColor.opacity(0.1) : Color.clear)
@@ -112,16 +122,28 @@ extension View {
 #Preview {
     HStack {
         SymbolGridItemView(
-            symbol: SFSymbol(id: "star.fill", category: .general),
+            symbol: SFSymbol(id: "heart.slash.circle", category: .general),
             isCopied: false,
+            isFavorite: false,
             onCopy: {},
-            onCopyName: {}
+            onCopyName: {},
+            onToggleFavorite: {}
+        )
+        SymbolGridItemView(
+            symbol: SFSymbol(id: "heart", category: .general),
+            isCopied: false,
+            isFavorite: false,
+            onCopy: {},
+            onCopyName: {},
+            onToggleFavorite: {}
         )
         SymbolGridItemView(
             symbol: SFSymbol(id: "heart.fill", category: .general),
             isCopied: true,
+            isFavorite: true,
             onCopy: {},
-            onCopyName: {}
+            onCopyName: {},
+            onToggleFavorite: {}
         )
     }
     .padding()
