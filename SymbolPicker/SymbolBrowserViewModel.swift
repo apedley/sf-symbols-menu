@@ -1,18 +1,43 @@
 import SwiftUI
 import AppKit
 
+enum CopyFormat: String, CaseIterable, Identifiable {
+    case unicode = "Unicode Character"
+    case symbolName = "Symbol Name"
+    case swiftUICode = "SwiftUI Code"
+
+    var id: String { rawValue }
+
+    var description: String {
+        switch self {
+        case .unicode:
+            return "Copies the symbol as a Unicode character (􀋃)"
+        case .symbolName:
+            return "Copies the symbol name (star.fill)"
+        case .swiftUICode:
+            return "Copies as SwiftUI code (Image(systemName: \"star.fill\"))"
+        }
+    }
+}
+
 @MainActor
 @Observable
 final class SymbolBrowserViewModel {
     var searchText: String = ""
     var selectedCategory: SymbolCategory = .all
     var lastCopiedSymbol: SFSymbol?
+    var copyFormat: CopyFormat {
+        didSet {
+            UserDefaults.standard.set(copyFormat.rawValue, forKey: Self.copyFormatKey)
+        }
+    }
 
     private let allSymbols: [SFSymbol] = SFSymbols.allSymbols
 
     private static let recentSymbolsKey = "recentSymbolIDs"
     private static let maxRecentSymbols = 20
     private static let favoriteSymbolsKey = "favoriteSymbolIDs"
+    private static let copyFormatKey = "copyFormat"
 
     private(set) var recentSymbolIDs: [String] {
         didSet {
@@ -29,6 +54,14 @@ final class SymbolBrowserViewModel {
     init() {
         self.recentSymbolIDs = UserDefaults.standard.stringArray(forKey: Self.recentSymbolsKey) ?? []
         self.favoriteSymbolIDs = Set(UserDefaults.standard.stringArray(forKey: Self.favoriteSymbolsKey) ?? [])
+
+        // Load copy format preference
+        if let savedFormat = UserDefaults.standard.string(forKey: Self.copyFormatKey),
+           let format = CopyFormat(rawValue: savedFormat) {
+            self.copyFormat = format
+        } else {
+            self.copyFormat = .unicode  // Default to Unicode
+        }
     }
 
     // Cache mapping symbol names to their Unicode characters
@@ -70,13 +103,23 @@ final class SymbolBrowserViewModel {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
 
-        // Try to get the actual Unicode character for this symbol
-        if let character = Self.getCharacter(for: symbol.name) {
-            pasteboard.setString(character, forType: .string)
-        } else {
-            // Fallback to symbol name
-            pasteboard.setString(symbol.name, forType: .string)
+        let textToCopy: String
+        switch copyFormat {
+        case .unicode:
+            // Try to get the actual Unicode character for this symbol
+            if let character = Self.getCharacter(for: symbol.name) {
+                textToCopy = character
+            } else {
+                // Fallback to symbol name
+                textToCopy = symbol.name
+            }
+        case .symbolName:
+            textToCopy = symbol.name
+        case .swiftUICode:
+            textToCopy = "Image(systemName: \"\(symbol.name)\")"
         }
+
+        pasteboard.setString(textToCopy, forType: .string)
 
         addToRecents(symbol)
         lastCopiedSymbol = symbol

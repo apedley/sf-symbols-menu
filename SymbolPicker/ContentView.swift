@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var viewModel = SymbolBrowserViewModel()
     @FocusState private var isSearchFocused: Bool
+    @State private var showSettings = false
 
     private let columns = [
         GridItem(.adaptive(minimum: 60, maximum: 70), spacing: 4)
@@ -56,27 +57,43 @@ struct ContentView: View {
 
             // Main content
             VStack(spacing: 0) {
-                // Search bar
+                // Search bar and settings
                 HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundStyle(.secondary)
-                    TextField("Search symbols...", text: $viewModel.searchText)
-                        .textFieldStyle(.plain)
-                        .focused($isSearchFocused)
+                    // Search bar
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.secondary)
+                        TextField("Search symbols...", text: $viewModel.searchText)
+                            .textFieldStyle(.plain)
+                            .focused($isSearchFocused)
 
-                    if !viewModel.searchText.isEmpty {
-                        Button {
-                            viewModel.searchText = ""
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.secondary)
+                        if !viewModel.searchText.isEmpty {
+                            Button {
+                                viewModel.searchText = ""
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
+                    }
+                    .padding(8)
+                    .background(.quaternary)
+                    .cornerRadius(8)
+
+                    // Settings button
+                    Button {
+                        showSettings.toggle()
+                    } label: {
+                        Image(systemName: "gear")
+                            .foregroundStyle(.secondary)
+                            .frame(width: 32, height: 32)
+                    }
+                    .buttonStyle(.plain)
+                    .popover(isPresented: $showSettings) {
+                        SettingsView(viewModel: viewModel)
                     }
                 }
-                .padding(8)
-                .background(.quaternary)
-                .cornerRadius(8)
                 .padding(.horizontal, 12)
                 .padding(.top, 12)
                 .padding(.bottom, 8)
