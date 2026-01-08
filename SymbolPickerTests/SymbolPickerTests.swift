@@ -6,7 +6,7 @@
 //
 
 import Testing
-@testable import SymbolPicker
+@testable import SymbolDrop
 
 struct SymbolPickerTests {
 

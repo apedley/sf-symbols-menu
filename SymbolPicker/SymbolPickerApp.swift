@@ -9,25 +9,27 @@ import SwiftUI
 
 @main
 struct SymbolPickerApp: App {
-    var body: some Scene {
-        MenuBarExtra{
-            ContentView()
-                .frame(width: 550, height: 550)
-        } label: {
-            Label {
-                    Text("SymbolDrop")
-                } icon: {
-                    let image: NSImage = {
-                        let ratio = $0.size.height / $0.size.width
-                        $0.size.height = 18
-                        $0.size.width = 18 / ratio
-                        return $0
-                    }(NSImage(named: "MenuBarIcon")!)
-                    
-                    Image(nsImage: image)
-                }
+  var body: some Scene {
+    MenuBarExtra {
+      ContentView()
+        .frame(minWidth: 400, maxWidth: 800, minHeight: 400, maxHeight: 800)
+    } label: {
+      Label {
+        Text("SymbolDrop")
+      } icon: {
+        let image: NSImage = {
+          let ratio = $0.size.height / $0.size.width
+          $0.size.height = 18
+          $0.size.width = 18 / ratio
+          return $0
+        }(NSImage(named: "MenuBarIcon")!)
 
-        }
-        .menuBarExtraStyle(.window)
+        Image(nsImage: image)
+      }
+
     }
+    .menuBarExtraStyle(.window)
+    .windowResizability(.contentSize)
+    .defaultSize(width: 550, height: 550)
+  }
 }
